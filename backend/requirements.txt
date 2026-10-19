@@ -1,0 +1,8 @@
+Django>=5.2,<6.0
+djangorestframework>=3.16
+django-environ>=0.12
+django-cors-headers>=4.7
+drf-spectacular>=0.28
+psycopg[binary]>=3.2
+celery>=5.5
+redis>=6.0
