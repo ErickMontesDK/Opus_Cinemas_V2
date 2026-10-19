@@ -5,6 +5,8 @@ const nextConfig: NextConfig = {
     // Posters come from TMDB's image CDN
     remotePatterns: [{ protocol: "https", hostname: "image.tmdb.org" }],
   },
+  // Do not generate AGENTS.md (AI assistant instructions) on `next dev`
+  agentRules: false,
 };
 
 export default nextConfig;
