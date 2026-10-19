@@ -29,6 +29,7 @@ It is a rebuild of a school project ([v1](https://github.com/ErickMontesDK/Opus-
 │   ├── cinemas/       # auditoriums, seats, showtimes
 │   ├── bookings/      # orders, seat locks, Stripe, websockets
 │   └── tickets/       # PDF, QR, validation
+├── docs/              # architecture and roadmap
 └── docker-compose.yml # Postgres and Redis
 ```
 
