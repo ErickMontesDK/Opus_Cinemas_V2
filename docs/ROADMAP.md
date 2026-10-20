@@ -16,7 +16,7 @@ Goal: both apps run locally against Postgres and Redis, and CI checks every push
   - Suggested commit: `chore(frontend): install dependencies and add lockfile`
 - [x] **1.4 Health check endpoint.** `GET /api/health/` returns `{"status": "ok"}` after running `SELECT 1` on the database. First pytest test for it. Learn: DRF function-based views, pytest-django fixtures (`client`, `django_db`).
   - Suggested commit: `feat(backend): add health check endpoint`
-- [ ] **1.5 Frontend talks to the API.** The home page (a Server Component) fetches `/api/health/` and shows the API status. Learn: Server Components, `fetch` on the server, environment variables in Next.js (`NEXT_PUBLIC_*`).
+- [x] **1.5 Frontend talks to the API.** The home page (a Server Component) fetches `/api/health/` and shows the API status. Learn: Server Components, `fetch` on the server, environment variables in Next.js (`NEXT_PUBLIC_*`).
   - Suggested commit: `feat(frontend): show API status on the home page`
 - [ ] **1.6 Continuous integration.** GitHub Actions workflow with two jobs: backend (ruff check, ruff format --check, `makemigrations --check`, pytest with a Postgres service) and frontend (`npm ci`, lint, build). Learn: workflow syntax, service containers, caching.
   - Suggested commit: `ci: run lint, tests and build on every push`
