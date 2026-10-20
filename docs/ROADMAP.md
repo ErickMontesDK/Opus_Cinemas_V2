@@ -18,7 +18,7 @@ Goal: both apps run locally against Postgres and Redis, and CI checks every push
   - Suggested commit: `feat(backend): add health check endpoint`
 - [x] **1.5 Frontend talks to the API.** The home page (a Server Component) fetches `/api/health/` and shows the API status. Learn: Server Components, `fetch` on the server, environment variables in Next.js (`NEXT_PUBLIC_*`).
   - Suggested commit: `feat(frontend): show API status on the home page`
-- [ ] **1.6 Continuous integration.** GitHub Actions workflow with two jobs: backend (ruff check, ruff format --check, `makemigrations --check`, pytest with a Postgres service) and frontend (`npm ci`, lint, build). Learn: workflow syntax, service containers, caching.
+- [x] **1.6 Continuous integration.** GitHub Actions workflow with two jobs: backend (ruff check, ruff format --check, `makemigrations --check`, pytest with a Postgres service) and frontend (`npm ci`, lint, build). Learn: workflow syntax, service containers, caching.
   - Suggested commit: `ci: run lint, tests and build on every push`
 
 **Done when:** `docker compose up -d`, the API and the frontend run with the README steps, and CI is green on GitHub.

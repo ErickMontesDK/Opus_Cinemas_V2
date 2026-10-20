@@ -68,13 +68,13 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:3000. For now it only shows the title.
+Open http://localhost:3000. For now it only shows the title and the API status.
 
 ## Quality checks
 
 ```bash
-cd backend && ruff check . && pytest
-cd frontend && npm run lint && npm run build
+(cd backend && ruff check . && ruff format --check . && python manage.py makemigrations --check --dry-run && pytest)
+(cd frontend && npm run lint && npm run build)
 ```
 
 ## Roadmap
