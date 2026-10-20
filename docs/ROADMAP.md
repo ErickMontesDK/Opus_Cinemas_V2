@@ -14,7 +14,7 @@ Goal: both apps run locally against Postgres and Redis, and CI checks every push
 - [x] **1.2 Backend runs.** Virtual environment, dependencies installed, `.env` from `.env.example`, `migrate` against Postgres in Docker, admin and Swagger reachable.
 - [x] **1.3 Frontend runs.** `npm install` (creates `package-lock.json`, which must be committed), `npm run dev`, home page renders with Tailwind styles. Learn: App Router file conventions, `layout.tsx` vs `page.tsx`, how Tailwind v4 reads the `@theme` block.
   - Suggested commit: `chore(frontend): install dependencies and add lockfile`
-- [ ] **1.4 Health check endpoint.** `GET /api/health/` returns `{"status": "ok"}` after running `SELECT 1` on the database. First pytest test for it. Learn: DRF function-based views, pytest-django fixtures (`client`, `django_db`).
+- [x] **1.4 Health check endpoint.** `GET /api/health/` returns `{"status": "ok"}` after running `SELECT 1` on the database. First pytest test for it. Learn: DRF function-based views, pytest-django fixtures (`client`, `django_db`).
   - Suggested commit: `feat(backend): add health check endpoint`
 - [ ] **1.5 Frontend talks to the API.** The home page (a Server Component) fetches `/api/health/` and shows the API status. Learn: Server Components, `fetch` on the server, environment variables in Next.js (`NEXT_PUBLIC_*`).
   - Suggested commit: `feat(frontend): show API status on the home page`
