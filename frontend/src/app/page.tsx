@@ -10,14 +10,14 @@ export default async function Home() {
   const isOnline = health === "ok";
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-6">
+    <section className="flex flex-col items-center justify-center gap-6 w-full">
       <h1 className="text-5xl font-bold">
-        Opus <span className="text-brand">Cinemas</span>
+        <span className="text-ink font-brand">Opus Cinemas</span>
       </h1>
-      <p className="flex items-center gap-2 text-sm text-muted">
-        <span className={`size-2.5 rounded-full ${isOnline ? "bg-green-500" : "bg-brand"}`} />
+      <p className="flex items-center gap-2 text-sm text-ink">
+        <span className={`size-2.5 rounded-full ${isOnline ? "bg-green-500" : "bg-accent"}`} />
         {isOnline ? "API online" : "API offline"}
       </p>
-    </main>
+    </section>
   );
 }

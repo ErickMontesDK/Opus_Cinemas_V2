@@ -3,18 +3,35 @@
 /*
  * Design tokens. Each --color-* defined here becomes a Tailwind utility:
  * --color-brand -> bg-brand, text-brand, border-brand, etc.
- * Phase 2 will replace these with the v1 visual identity.
+
  */
 @theme {
-  --color-brand: #e50914;
-  --color-brand-dark: #b20710;
-  --color-ink: #0b0b0f;
-  --color-surface: #16161d;
-  --color-muted: #9ca3af;
 
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --color-brand: #F1CD55;
+  --color-ink: #181818;
+  --color-muted: #948B89;
+  --color-paper: #FAF1E5;
+  --color-accent: #ED254E;
+  --color-secondary: #2C8C99;
+  --color-ink-soft: #2f2f2f;
+
+  --font-brand: var(--font-gugi), ui-sans-serif, system-ui, sans-serif;
+  --font-detail: var(--font-orbitron), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-roboto), ui-sans-serif, system-ui, sans-serif;
 }
 
-body {
-  @apply bg-ink text-white antialiased;
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+  
+  body {
+    @apply flex min-h-screen flex-col bg-brand text-ink antialiased;
+  }
+
+  a {
+    @apply transition-colors duration-300;
+  }
 }
+
+

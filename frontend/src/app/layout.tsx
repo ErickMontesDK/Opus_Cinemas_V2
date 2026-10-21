@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Gugi, Orbitron, Roboto } from "next/font/google";
 import "./globals.css";
+import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
 
-const geist = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
+const gugi = Gugi({ variable: "--font-gugi", subsets: ["latin"], weight: "400" });
+const orbitron = Orbitron({ variable: "--font-orbitron", subsets: ["latin"] });
+const roboto = Roboto({ variable: "--font-roboto", subsets: ["latin"]});
 
 export const metadata: Metadata = {
   title: "Opus Cinemas",
@@ -11,8 +15,19 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      <body className={geist.variable}>{children}</body>
+    <html className={`${gugi.variable} ${orbitron.variable} ${roboto.variable}`} lang="en">
+      <body>
+        <SiteHeader />
+        
+
+        <main className="flex flex-1">
+        {children}
+        </main>
+
+        <SiteFooter />
+            
+      </body>
+
     </html>
   );
 }
