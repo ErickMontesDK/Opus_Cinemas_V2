@@ -29,8 +29,10 @@ Goal: both apps run locally against Postgres and Redis, and CI checks every push
 
 Goal: staff can import movies from TMDB and schedule showtimes; visitors see the listing and movie pages.
 
-- [ ] **2.1 Visual identity.** Port the v1 colors and fonts into Tailwind `@theme` tokens; base layout with header and footer.
-- [ ] **2.2 Movie model.** `Movie` model, migration, admin registration. Tests for model basics.
+- [x] **2.1 Visual identity.** Port the v1 colors and fonts into Tailwind `@theme` tokens; base layout with header and footer.
+  - Suggested commit: `feat(frontend): add v1 visual identity and base layout`
+- [x] **2.2 Movie model.** `Movie` model, migration, admin registration. Tests for model basics.
+  - Suggested commit: `feat(movies): add movie and genre models with admin and tests`
 - [ ] **2.3 TMDB client.** A small service module that fetches a movie by TMDB id (API key from `.env`). Tests mock the HTTP calls.
 - [ ] **2.4 Import from TMDB.** Admin action or management command that imports/updates movies from TMDB.
 - [ ] **2.5 Auditoriums and seats.** `Auditorium` and `Seat` models; generating seats from rows × columns; seat types.

@@ -26,7 +26,7 @@ export default function SiteFooter() {
                     </div>
                 
             
-                    <div className="flex items-center gap-3 justify-start">
+                    <div className="flex items-center gap-3 ">
                         <MdEmail aria-hidden="true" />
                         <a href="mailto:info@opuscinemas.com" className="hover:text-brand">info@opuscinemas.com</a>
                     </div>
