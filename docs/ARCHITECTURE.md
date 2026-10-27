@@ -17,20 +17,26 @@ Stripe ──webhook──▶ Django ──task──▶ Celery worker ──┴
 - **Celery** runs slow work (PDF generation, emails, expiring orders) outside the request/response cycle.
 - **Channels** pushes seat status changes to everyone viewing the same showtime.
 
-## Data model (first draft)
+## Data model
 
 | Model | Fields |
 |---|---|
-| **Movie** | tmdb_id, title, synopsis, runtime, rating, poster, trailer, genres |
+| **Movie** | tmdb_id, title, synopsis, runtime, classification, release_date, poster_path, backdrop_path, trailer, genres |
+| **Genre** | tmdb_id, name |
 | **Auditorium** | name, rows, columns |
-| **Seat** | auditorium, row, number, type (standard, VIP, accessible) |
-| **Showtime** | movie, auditorium, starts_at, base_price, language/format |
-| **Order** | user, showtime, status (pending, paid, cancelled, expired), total, stripe_session_id, created_at |
-| **Ticket** | order, showtime, seat, unique code (for the QR), used_at |
+| **Seat** | auditorium, row, number |
+| **Showtime** | movie, auditorium, starts_at, ends_at, base_price |
+| **TicketType** | name, price (e.g. Regular, Child, Senior) |
+| **Order** | user, showtime, status (pending, paid, cancelled, expired, refunded), total, stripe_session_id, created_at |
+| **Ticket** | order, showtime, seat, ticket_type, price, unique code (for the QR), used_at |
 
 Key rules:
+- Movie data comes from TMDB, but only the fields a cinema needs are stored. TMDB returns image paths (`poster_path`, `backdrop_path`), not full URLs; the full URL is built when the image is displayed. User ratings, popularity, budget and revenue are not stored.
+- TMDB has no showtimes. Staff create them in the Django admin, and a `seed_showtimes` management command generates a week of showtimes for the movies now playing.
+- `Showtime.ends_at` is stored, not typed by hand: `save()` computes it from `starts_at`, the movie runtime and the cleaning time.
+- A `Showtime` cannot overlap another showtime in the same auditorium (model validation using `starts_at` and `ends_at`).
 - `Ticket` has a unique constraint on `(showtime, seat)`: the database rejects a double sale even if everything else fails.
-- A `Showtime` cannot overlap another showtime in the same auditorium (model validation).
+- `Ticket.price` stores the price actually paid, so later price changes do not alter past sales.
 
 ## Purchase flow
 
