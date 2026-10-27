@@ -6,3 +6,4 @@ drf-spectacular>=0.28
 psycopg[binary]>=3.2
 celery>=5.5
 redis>=6.0
+requests>=2.34.2

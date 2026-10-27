@@ -33,7 +33,8 @@ Goal: staff can import movies from TMDB and schedule showtimes; visitors see the
   - Suggested commit: `feat(frontend): add v1 visual identity and base layout`
 - [x] **2.2 Movie model.** `Movie` model, migration, admin registration. Tests for model basics.
   - Suggested commit: `feat(movies): add movie and genre models with admin and tests`
-- [ ] **2.3 TMDB client.** A small service module that fetches a movie by TMDB id (API key from `.env`). Tests mock the HTTP calls.
+- [x] **2.3 TMDB client.** A small service module that fetches a movie by TMDB id (API key from `.env`). Tests mock the HTTP calls.
+  - Suggested commit: `feat(movies): add tmdb client to fetch movie details`
 - [ ] **2.4 Import from TMDB.** Admin action or management command that imports/updates movies from TMDB.
 - [ ] **2.5 Auditoriums and seats.** `Auditorium` and `Seat` models; generating seats from rows × columns; seat types.
 - [ ] **2.6 Showtimes.** `Showtime` model with overlap validation in the same auditorium. Tests for the overlap rule.
