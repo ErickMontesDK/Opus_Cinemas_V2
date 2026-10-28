@@ -35,7 +35,8 @@ Goal: staff can import movies from TMDB and schedule showtimes; visitors see the
   - Suggested commit: `feat(movies): add movie and genre models with admin and tests`
 - [x] **2.3 TMDB client.** A small service module that fetches a movie by TMDB id (API key from `.env`). Tests mock the HTTP calls.
   - Suggested commit: `feat(movies): add tmdb client to fetch movie details`
-- [ ] **2.4 Import from TMDB.** Admin action or management command that imports/updates movies from TMDB.
+- [x] **2.4 Import from TMDB.** Admin action or management command that imports/updates movies from TMDB.
+  - Suggested commit: `feat(movies): add import_movies command to import movies from tmdb`
 - [ ] **2.5 Auditoriums and seats.** `Auditorium` and `Seat` models; generating seats from rows × columns; seat types.
 - [ ] **2.6 Showtimes.** `Showtime` model with overlap validation in the same auditorium. Tests for the overlap rule.
 - [ ] **2.7 Read API.** DRF serializers and viewsets: movie list, movie detail, showtimes by movie and date. Documented in Swagger. API tests.
