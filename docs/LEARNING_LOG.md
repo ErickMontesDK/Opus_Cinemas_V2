@@ -4,6 +4,30 @@ A short entry per roadmap step: what was built, the key decisions and the concep
 
 ---
 
+## 2.6 Showtimes
+
+**Built**
+- `Showtime` model (movie, auditorium, starts_at, ends_at, base_price) with admin registration (date hierarchy, movie autocomplete, read-only `ends_at`).
+- Overlap validation in `clean()`: no two showtimes in the same auditorium can share any time.
+- Tests for `ends_at`, the overlap cases, back-to-back showtimes, editing, a missing runtime and a negative price.
+
+**Key decisions**
+- `ends_at` is stored and computed (`starts_at + runtime + CLEANING_MINUTES`) in both `save()` and `clean()`, because forms validate before saving.
+- A movie without a runtime is rejected instead of using a default duration, which would produce a wrong `ends_at`.
+- Overlap rule in `clean()` only (the simple option). Trade-off: `objects.create()`, `save()` and scripts skip it, and two concurrent requests could both pass. The stronger alternative is a Postgres `ExclusionConstraint` on a `tstzrange` with the `btree_gist` extension.
+- `on_delete=PROTECT` on movie and auditorium: deleting them must not silently delete showtimes (and, later, sold tickets).
+- `base_price` is a `DecimalField` with a validator plus a `CheckConstraint` (not negative).
+
+**Concepts**
+- `clean()` only runs through `full_clean()`: model forms and the admin call it, but `save()`, `objects.create()` and DRF serializers do not.
+- Two ranges overlap when `a.start < b.end and a.end > b.start`. Strict comparisons allow a showtime to start exactly when the previous one ends.
+- `exclude(pk=self.pk)` so an edited object does not conflict with itself.
+- `editable=False` hides a field from forms and skips its validation in `full_clean()`.
+- Datetimes are stored in UTC; `timezone.localtime()` converts them to `America/Vancouver` for display.
+- A test that proves "this is allowed" needs the conflicting data to exist; otherwise it passes even when the rule is broken.
+
+---
+
 ## 2.5 Auditoriums and seats
 
 **Built**

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Auditorium, Seat
+from .models import Auditorium, Seat, Showtime
 
 
 @admin.register(Auditorium)
@@ -27,3 +27,13 @@ class SeatAdmin(admin.ModelAdmin):
 
     def has_add_permission(self, request):
         return False
+
+
+@admin.register(Showtime)
+class ShowtimeAdmin(admin.ModelAdmin):
+    list_display = ("movie", "auditorium", "starts_at", "ends_at", "base_price")
+    list_filter = ("auditorium", "movie")
+    date_hierarchy = "starts_at"
+    # Needs search_fields on MovieAdmin.
+    autocomplete_fields = ("movie",)
+    readonly_fields = ("ends_at",)
