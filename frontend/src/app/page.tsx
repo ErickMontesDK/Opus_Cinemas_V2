@@ -1,23 +1,29 @@
 import { connection } from "next/server";
 
-import { getApiHealth } from "@/lib/api";
+import MovieCard from "@/components/MovieCard";
+import { getMovies } from "@/lib/api";
+
+const PRELOADED_POSTERS = 4;
 
 export default async function Home() {
-  // Render on every request instead of once at build time,
-  // so the status shown is the current one
   await connection();
-  const health = await getApiHealth();
-  const isOnline = health === "ok";
+  const movies = await getMovies();
 
   return (
-    <section className="flex flex-col items-center justify-center gap-6 w-full">
-      <h1 className="text-5xl font-bold">
-        <span className="text-ink font-brand">Opus Cinemas</span>
-      </h1>
-      <p className="flex items-center gap-2 text-sm text-ink">
-        <span className={`size-2.5 rounded-full ${isOnline ? "bg-green-500" : "bg-accent"}`} />
-        {isOnline ? "API online" : "API offline"}
-      </p>
+    <section className="container mx-auto w-full px-4 py-8">
+      <h1 className="mb-6 font-brand text-3xl md:text-4xl">Now showing</h1>
+
+      {movies.length === 0 ? (
+        <p>No movies showing right now. Please check back soon.</p>
+      ) : (
+        <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:gap-6 lg:grid-cols-4 xl:grid-cols-5">
+          {movies.map((movie, index) => (
+            <li key={movie.id}>
+              <MovieCard movie={movie} preload={index < PRELOADED_POSTERS} />
+            </li>
+          ))}
+        </ul>
+      )}
     </section>
   );
 }

@@ -4,6 +4,33 @@ A short entry per roadmap step: what was built, the key decisions and the concep
 
 ---
 
+## 2.8 Listing page
+
+**Built**
+- The home page (`/`) is now the movie listing: a Server Component that fetches `GET /api/movies/` and renders a responsive grid of `MovieCard` components.
+- `MovieCard` shows the poster with `next/image` (or a placeholder with the title), classification, genres and runtime.
+- `getMovies()` and the `MovieListItem` type in `lib/api.ts`, `posterUrl()` in `lib/tmdb.ts`, `formatRuntime()` in `lib/format.ts`.
+- `app/error.tsx` shows a fallback page with a "Try again" button when the API fails.
+- The API status indicator from step 1.5 and `getApiHealth()` were removed; `/api/health/` stays in the backend.
+
+**Key decisions**
+- The listing lives at `/`, not `/movies`: the listing is the main page of a cinema.
+- `getMovies()` throws on failure and `error.tsx` catches it, instead of returning `null` and handling errors in every page.
+- Dynamic rendering with `connection()`: the listing changes, and the API is not reachable during `npm run build` in CI. ISR can be revisited at deploy time.
+- The poster URL is built in the frontend: the image size is a presentation detail, not a business rule.
+- Cards do not link to the movie page yet; the link comes with the route in step 2.9.
+
+**Concepts**
+- A TypeScript type that mirrors a DRF serializer catches mismatches at build time, but does not validate the response at runtime.
+- `fetch` only throws on network errors, so `response.ok` must be checked by hand.
+- Union types (`string | null`, `number | null`) and narrowing with `if (x === null)`.
+- `next/image`: `width`/`height` reserve space (no layout shift), `sizes` lets phones download a smaller file, `preload` (replaces `priority` in Next 16) speeds up the first posters, and `remotePatterns` allow-lists external hosts.
+- Mobile first in Tailwind: unprefixed classes apply to every screen, `sm:`/`lg:`/`xl:` override from that width up.
+- JSX conditionals: `a ? b : c` and `a && b`; `.map()` with a stable `key`.
+- Error boundaries need state and event handlers, so `error.tsx` must be a Client Component; in production the browser only gets a generic message and a `digest`.
+
+---
+
 ## 2.7 Read API
 
 **Built**
