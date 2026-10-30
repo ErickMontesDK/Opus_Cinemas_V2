@@ -4,6 +4,34 @@ A short entry per roadmap step: what was built, the key decisions and the concep
 
 ---
 
+## 2.7 Read API
+
+**Built**
+- `GET /api/movies/` and `GET /api/movies/{id}/` with a `ReadOnlyModelViewSet` and a `DefaultRouter`.
+- `GET /api/showtimes/` with a `ListAPIView`: upcoming showtimes only, optional `?movie=<id>` and `?date=YYYY-MM-DD` filters.
+- Each app has its own `urls.py`, included under `api/` in `config/urls.py`.
+- API tests for both endpoints, including the response shape, a 404, the query count, the filters and invalid parameters.
+
+**Key decisions**
+- Two movie serializers: a light one for the list and a detail one that extends it, picked in `get_serializer_class()`.
+- Genres as a list of names (`SlugRelatedField`), posters as TMDB paths so the frontend picks the image size.
+- Showtimes get their own endpoint in `cinemas`, not a nested action under `movies`, because the model lives there.
+- Past showtimes are filtered on the server: the client never decides what can be booked.
+- The list shows every movie for now; step 2.10 limits it to movies with upcoming showtimes.
+- Filters are written by hand in `get_queryset()` and documented with `@extend_schema`, instead of adding `django-filter` for two parameters.
+- No pagination yet. Trade-off: adding it later changes the shape of the JSON.
+
+**Concepts**
+- `self.action` tells a viewset which action is running (`list`, `retrieve`); the router sets it.
+- drf-spectacular reads the code without running it, so query parameters read inside `get_queryset()` must be declared with `OpenApiParameter`.
+- DRF's `ValidationError` becomes a 400; an unhandled error in a view becomes a 500.
+- `parse_date` fails in two ways: it raises `ValueError` for an impossible date and returns `None` for a string that is not a date. `starts_at__date=None` becomes `IS NULL` and silently returns an empty list.
+- The `__date` lookup converts to the current time zone first, so 23:30 in Vancouver stays on its local day even though it is the next day in UTC.
+- N+1 queries: `select_related` joins a foreign key in the same query; `prefetch_related` loads a many-to-many relation in one extra query with `IN (...)`. `django_assert_num_queries` guards against regressions.
+- Tests use dates relative to `timezone.localdate()`, so they do not break when a fixed date passes or when UTC and Vancouver are on different days.
+
+---
+
 ## 2.6 Showtimes
 
 **Built**

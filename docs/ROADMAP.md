@@ -41,7 +41,8 @@ Goal: staff can import movies from TMDB and schedule showtimes; visitors see the
   - Suggested commit: `feat(cinemas): add auditorium and seat models with seat generation`
 - [x] **2.6 Showtimes.** `Showtime` model with overlap validation in the same auditorium. Tests for the overlap rule.
   - Suggested commit: `feat(cinemas): add showtime model with overlap validation`
-- [ ] **2.7 Read API.** DRF serializers and viewsets: movie list, movie detail, showtimes by movie and date. Documented in Swagger. API tests.
+- [x] **2.7 Read API.** DRF serializers and viewsets: movie list, movie detail, showtimes by movie and date. Documented in Swagger. API tests.
+  - Suggested commit: `feat(backend): add read api for movies and showtimes`
 - [ ] **2.8 Listing page.** `/` (or `/movies`) in Next.js, server-rendered from the API, with posters via `next/image`.
 - [ ] **2.9 Movie page.** `/movies/[id]` with details, trailer and showtimes grouped by date. Learn: dynamic routes, `generateMetadata`.
 - [ ] **2.10 Seed data.** Management command that creates auditoriums, imports a few movies and schedules showtimes for demo purposes.
