@@ -4,6 +4,39 @@ A short entry per roadmap step: what was built, the key decisions and the concep
 
 ---
 
+## 2.9 Movie page
+
+**Built**
+- `/movies/[id]`: a Server Component with the poster, title, tags, release date, YouTube trailer and synopsis, plus a showtimes panel with one tab per day.
+- `generateMetadata` sets the page title and description; the root layout adds a title template (`%s · Opus Cinemas`).
+- `getMovie()`, `getShowtimes()` and the `MovieDetail` and `Showtime` types in `lib/api.ts`; `backdropUrl()` in `lib/tmdb.ts`; `trailerEmbedUrl()` in `lib/youtube.ts`; date formatters and `groupShowtimesByDate()` in `lib/format.ts`.
+- `MovieMetaTags`, `TrailerEmbed` and `ShowtimeTabs` components in `components/movie/`.
+- Movie cards on the listing now link to the movie page.
+- The look follows v1 (blurred backdrop, glass panels, pill tags, time grid), rebuilt mobile first with Tailwind tokens.
+
+**Key decisions**
+- Day tabs are links (`?date=YYYY-MM-DD`) read from `searchParams`, not `useState`: they can be shared, survive a reload and the back button, and keep the page a Server Component. Trade-off: each tab change is a server round trip.
+- Tabs come from the days that have showtimes (v1 had fixed "Today / Tomorrow / After Tomorrow" tabs). A missing or unknown date falls back to the first day.
+- Showtimes are grouped by day in the frontend: it is presentation, and the API keeps a flat list that other screens can reuse.
+- `getMovie()` is wrapped in React's `cache()`, because Next does not dedupe a `fetch` that has a `signal`, and `generateMetadata` and the page both need the movie.
+- `getMovie()` only accepts digits, so an id like `../health` cannot reach another endpoint, and invalid ids return a 404 without calling the API.
+- A missing movie returns `null` and the page calls `notFound()`; any other API error is thrown and caught by `error.tsx`.
+- The synopsis sits next to the poster, above the trailer, so it is readable without scrolling; it stays left-aligned on mobile because centered paragraphs are hard to read.
+- The trailer uses `youtube-nocookie.com`, `loading="lazy"` and a `title` for screen readers. Showtimes are not links yet: seat selection comes in phase 4.
+
+**Concepts**
+- Dynamic segments (`[id]`), and `params` and `searchParams` as Promises in Next 15+; the generated `PageProps<"/movies/[id]">` type.
+- `notFound()` returns `never`, so TypeScript narrows `movie` to non-null after it.
+- A page that reads `params` or `searchParams` is dynamic without `connection()`.
+- Instants vs calendar days: `starts_at` is formatted in `America/Vancouver`; a date-only string (`"2026-11-06"`) becomes midnight UTC in `new Date()`, so it is formatted in UTC to stay on the same day. Offsets are never hardcoded; the time zone database decides them.
+- `Intl.DateTimeFormat`, with the `en-CA` locale to get `YYYY-MM-DD` keys.
+- Grouping with a `Record`, `??=` (nullish assignment), `Object.entries()` and sorting ISO dates as strings; `??` for fallbacks.
+- Tailwind: opacity modifiers (`bg-ink/60`), arbitrary values (`lg:grid-cols-[3fr_2fr]`), `group`/`group-hover:`, `isolate` with negative `z-index`, `bg-radial`.
+- `next/image` with `fill` for a background image, and `alt=""` for decorative images.
+- State that should survive a shared link belongs in the URL; short-lived UI state (a form draft, an open menu) belongs in `useState`.
+
+---
+
 ## 2.8 Listing page
 
 **Built**

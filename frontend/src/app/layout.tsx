@@ -9,7 +9,8 @@ const orbitron = Orbitron({ variable: "--font-orbitron", subsets: ["latin"] });
 const roboto = Roboto({ variable: "--font-roboto", subsets: ["latin"]});
 
 export const metadata: Metadata = {
-  title: "Opus Cinemas",
+  // Child pages set only their own title; the template adds the site name.
+  title: { default: "Opus Cinemas", template: "%s · Opus Cinemas" },
   description: "Showtimes, live seat selection and online tickets.",
 };
 

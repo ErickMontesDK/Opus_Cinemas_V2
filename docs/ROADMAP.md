@@ -45,7 +45,8 @@ Goal: staff can import movies from TMDB and schedule showtimes; visitors see the
   - Suggested commit: `feat(backend): add read api for movies and showtimes`
 - [x] **2.8 Listing page.** `/` (or `/movies`) in Next.js, server-rendered from the API, with posters via `next/image`.
   - Suggested commit: `feat(frontend): add movie listing page with posters`
-- [ ] **2.9 Movie page.** `/movies/[id]` with details, trailer and showtimes grouped by date. Learn: dynamic routes, `generateMetadata`.
+- [x] **2.9 Movie page.** `/movies/[id]` with details, trailer and showtimes grouped by date. Learn: dynamic routes, `generateMetadata`.
+  - Suggested commit: `feat(frontend): add movie page with trailer and showtimes by day`
 - [ ] **2.10 Seed data.** Management command that creates auditoriums, imports a few movies and schedules showtimes for demo purposes.
 
 **Done when:** a visitor can browse current movies and see their showtimes, all coming from Postgres.
