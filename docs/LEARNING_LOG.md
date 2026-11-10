@@ -161,3 +161,29 @@ A short entry per roadmap step: what was built, the key decisions and the concep
 - Sorting by a boolean key (`False` sorts first) with Python's stable sort to express "prefer X".
 - `mock.patch` replaces a name: patch where it is used (`movies.importer.fetch_movie_details`), not where it is defined.
 - Normalising missing external values (`null`, `0`, `""`) and parsing dates with `parse_date`, so the returned object holds a `date`, not a `str`.
+
+---
+
+## 2.10 Seed data
+
+**Built**
+- `fetch_now_playing()` in `movies/tmdb.py`, sharing a `_get()` helper with `fetch_movie_details()`.
+- `update_listing` management command (`cinemas`): creates three auditoriums (with two wheelchair spaces each), imports the movies now in theaters in Canada and schedules showtimes from today for `--days` days (default 7) with `--movies` movies (default 6).
+- The movie list API only returns movies with upcoming showtimes; the detail endpoint still returns any movie.
+- Fix on the movie page: the date tabs no longer widen the page on mobile, and the tab bar has a thin brand-colored scrollbar.
+
+**Key decisions**
+- One command both seeds an empty database and refreshes the listing later, instead of two commands sharing code.
+- Movies come from TMDB `now_playing` (region `CA`). The list has no runtime, so every id is imported with its details; movies that fail or have no runtime are skipped and replaced by the next ones.
+- Idempotency per auditorium and local day: a day that already has showtimes is left alone. Matching exact start times would break when the movies change, because new runtimes give new times.
+- Network calls run before the transaction; auditoriums and showtimes are saved in one `transaction.atomic()`.
+- Each showtime runs `full_clean()` before `save()`, so the overlap rule in `Showtime.clean()` also protects the command.
+- Matinee price before 17:00, evening price after, using local time.
+
+**Concepts**
+- Custom management commands: `<app>/management/commands/<name>.py`, `add_arguments`, `CommandError`.
+- `timezone.make_aware(datetime.combine(day, time))` builds a local datetime with the right DST offset; `starts_at__date` filters by local day when `USE_TZ = True`.
+- `get_or_create` with `defaults`; it calls `save()`, so seat generation still runs.
+- Pure functions (`plan_day`, `round_up`, `price_for`) are easy to test without a database.
+- A class-level `queryset` is built once at import time; per-request filters such as `timezone.now()` belong in `get_queryset()`. A filter across a reverse relation joins rows, so `distinct()` removes duplicates.
+- CSS: grid and flex children have `min-width: auto`, so wide content stretches them; `minmax(0, 1fr)` columns and `min-w-0` let `overflow-x-auto` actually scroll. `@utility` defines a custom Tailwind v4 class; `scrollbar-width` and `scrollbar-color` are the standard scrollbar properties.

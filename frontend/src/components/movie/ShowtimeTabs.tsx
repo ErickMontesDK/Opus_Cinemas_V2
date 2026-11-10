@@ -18,8 +18,9 @@ export default function ShowtimeTabs({ movieId, groups, selectedDate }: Showtime
 
   return (
     <div className="flex flex-col gap-6">
-      <nav aria-label="Showtime dates">
-        <ul className="flex gap-2 overflow-x-auto rounded-2xl bg-ink/40 p-1">
+      {/* The nav scrolls, not the ul, so the scrollbar sits below the rounded bar instead of inside it. */}
+      <nav aria-label="Showtime dates" className="scrollbar-brand overflow-x-auto pb-2">
+        <ul className="flex w-max min-w-full gap-2 rounded-2xl bg-ink/40 p-1">
           {groups.map((group) => {
             const isSelected = group.date === selectedGroup.date;
             return (

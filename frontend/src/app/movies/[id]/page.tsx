@@ -45,8 +45,9 @@ export default async function MoviePage({ params, searchParams }: PageProps<"/mo
       )}
       <div className="absolute inset-0 -z-10 bg-radial from-transparent to-ink/80" />
 
-      <div className="container mx-auto grid gap-6 px-4 py-8 lg:grid-cols-[3fr_2fr] lg:items-start lg:gap-10 lg:py-12">
-        <article className="flex flex-col gap-8 rounded-3xl border border-paper/10 bg-ink/60 p-5 shadow-2xl backdrop-blur-xl md:p-8">
+      {/* minmax(0, …) columns and min-w-0 stop wide children (the date tabs) from stretching the grid. */}
+      <div className="container mx-auto grid grid-cols-1 gap-6 px-4 py-8 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:items-start lg:gap-10 lg:py-12">
+        <article className="flex min-w-0 flex-col gap-8 rounded-3xl border border-paper/10 bg-ink/60 p-5 shadow-2xl backdrop-blur-xl md:p-8">
           <div className="flex flex-col items-center gap-6 md:flex-row md:items-start">
             {poster ? (
               <Image
@@ -83,7 +84,7 @@ export default async function MoviePage({ params, searchParams }: PageProps<"/mo
           <TrailerEmbed trailer={movie.trailer} title={movie.title} />
         </article>
 
-        <section className="flex flex-col gap-6 rounded-3xl border border-paper/10 bg-ink/60 p-5 shadow-2xl backdrop-blur-xl md:p-8">
+        <section className="flex min-w-0 flex-col gap-6 rounded-3xl border border-paper/10 bg-ink/60 p-5 shadow-2xl backdrop-blur-xl md:p-8">
           <h2 className="font-brand text-2xl md:text-3xl">Showtimes</h2>
           <ShowtimeTabs
             movieId={movie.id}

@@ -20,6 +20,12 @@
   --font-sans: var(--font-roboto), ui-sans-serif, system-ui, sans-serif;
 }
 
+/* Thin brand scrollbar. Standard properties: Chrome 121+, Edge, Firefox; Safari keeps its native one. */
+@utility scrollbar-brand {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--color-brand) 70%, transparent) transparent;
+}
+
 @layer base {
   html {
     @apply scroll-smooth;

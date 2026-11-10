@@ -5,7 +5,7 @@ from unittest import mock
 import pytest
 import requests
 
-from movies.tmdb import BASE_URL, TMDBClientError, fetch_movie_details
+from movies.tmdb import BASE_URL, TMDBClientError, fetch_movie_details, fetch_now_playing
 
 FIXTURE = Path(__file__).parent / "fixtures" / "tmdb_movie_27205.json"
 
@@ -73,3 +73,29 @@ def test_network_error_raises_client_error():
 
     # `raise ... from e` keeps the original error as the cause.
     assert isinstance(excinfo.value.__cause__, requests.Timeout)
+
+
+def test_now_playing_returns_ids_in_order():
+    data = {"results": [{"id": 1311031, "title": "A"}, {"id": 755898, "title": "B"}]}
+
+    with mock.patch("movies.tmdb.requests.get", return_value=fake_response(data)) as mock_get:
+        result = fetch_now_playing()
+
+    assert result == [1311031, 755898]
+    args, kwargs = mock_get.call_args
+    assert args[0] == f"{BASE_URL}/movie/now_playing"
+    # Canada, because the cinema is in Vancouver.
+    assert kwargs["params"] == {"region": "CA"}
+
+
+def test_now_playing_without_results_returns_empty_list():
+    with mock.patch("movies.tmdb.requests.get", return_value=fake_response({})):
+        assert fetch_now_playing() == []
+
+
+def test_now_playing_http_error_raises_client_error():
+    error = requests.HTTPError("401 Client Error: Unauthorized")
+
+    with mock.patch("movies.tmdb.requests.get", return_value=fake_response(status_error=error)):
+        with pytest.raises(TMDBClientError, match="401"):
+            fetch_now_playing()

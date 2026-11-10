@@ -47,7 +47,8 @@ Goal: staff can import movies from TMDB and schedule showtimes; visitors see the
   - Suggested commit: `feat(frontend): add movie listing page with posters`
 - [x] **2.9 Movie page.** `/movies/[id]` with details, trailer and showtimes grouped by date. Learn: dynamic routes, `generateMetadata`.
   - Suggested commit: `feat(frontend): add movie page with trailer and showtimes by day`
-- [ ] **2.10 Seed data.** Management command that creates auditoriums, imports a few movies and schedules showtimes for demo purposes.
+- [x] **2.10 Seed data.** Management command that creates auditoriums, imports the movies now in theaters and schedules showtimes for demo purposes.
+  - Suggested commit: `feat(cinemas): add update_listing command to seed and refresh the listing`
 
 **Done when:** a visitor can browse current movies and see their showtimes, all coming from Postgres.
 
