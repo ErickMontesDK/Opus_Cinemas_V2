@@ -1,8 +1,8 @@
-import type { MovieDetail } from "@/lib/api";
+import type { MovieListItem } from "@/lib/api";
 import { formatRuntime } from "@/lib/format";
 
 type MovieMetaTagsProps = {
-  movie: MovieDetail;
+  movie: MovieListItem;
 };
 
 export default function MovieMetaTags({ movie }: MovieMetaTagsProps) {

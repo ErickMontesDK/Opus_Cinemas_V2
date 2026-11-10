@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import date, timedelta
 from decimal import Decimal
 
 import pytest
@@ -31,6 +31,8 @@ def movie(db):
         runtime=148,
         classification="PG",
         poster_path="/inception.jpg",
+        backdrop_path="/inception-backdrop.jpg",
+        release_date=date(2010, 7, 16),
         trailer="https://www.youtube.com/watch?v=YoHD9XEInc0",
     )
     movie.genres.add(
@@ -51,6 +53,8 @@ def test_movie_list_returns_light_fields(client, movie):
             "id": movie.id,
             "title": "Inception",
             "poster_path": "/inception.jpg",
+            "backdrop_path": "/inception-backdrop.jpg",
+            "release_date": "2010-07-16",
             "classification": "PG",
             "runtime": 148,
             "genres": ["Action", "Science Fiction"],

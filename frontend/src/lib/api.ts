@@ -6,6 +6,8 @@ export type MovieListItem = {
   id: number;
   title: string;
   poster_path: string;
+  backdrop_path: string;
+  release_date: string | null;
   classification: string;
   runtime: number | null;
   genres: string[];
@@ -13,8 +15,6 @@ export type MovieListItem = {
 
 export type MovieDetail = MovieListItem & {
   synopsis: string;
-  release_date: string | null;
-  backdrop_path: string;
   trailer: string;
 };
 
@@ -64,6 +64,17 @@ export async function getShowtimes(movieId: number): Promise<Showtime[]> {
   });
   if (!response.ok) {
     throw new Error(`GET /api/showtimes/?movie=${movieId} failed with status ${response.status}`);
+  }
+  return response.json();
+}
+
+// All the upcoming showtimes of one local day (YYYY-MM-DD), for every movie, in one request.
+export async function getShowtimesOn(date: string): Promise<Showtime[]> {
+  const response = await fetch(`${API_URL}/api/showtimes/?date=${date}`, {
+    signal: AbortSignal.timeout(5000),
+  });
+  if (!response.ok) {
+    throw new Error(`GET /api/showtimes/?date=${date} failed with status ${response.status}`);
   }
   return response.json();
 }

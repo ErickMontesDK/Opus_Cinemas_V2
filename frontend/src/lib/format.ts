@@ -66,6 +66,18 @@ export const formatDayLabel = (dateKey: string): string => calendarDayFormatter.
 export const formatReleaseDate = (releaseDate: string | null): string =>
     releaseDate ? releaseDateFormatter.format(new Date(releaseDate)) : "";
 
+const NEW_RELEASE_DAYS = 14;
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+// Both dates are YYYY-MM-DD strings parsed as UTC midnight, so the difference is a whole number of days.
+export const isNewRelease = (releaseDate: string | null, now: Date = new Date()): boolean => {
+    if (!releaseDate) {
+        return false;
+    }
+    const daysSinceRelease = (Date.parse(dateKeyFormatter.format(now)) - Date.parse(releaseDate)) / MS_PER_DAY;
+    return daysSinceRelease >= 0 && daysSinceRelease < NEW_RELEASE_DAYS;
+};
+
 export const groupShowtimesByDate = (showtimes: Showtime[]): ShowtimeGroup[] => {
     const groupedShowtimes: Record<string, Showtime[]> = {};
 

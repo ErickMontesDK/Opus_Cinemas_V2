@@ -187,3 +187,31 @@ A short entry per roadmap step: what was built, the key decisions and the concep
 - Pure functions (`plan_day`, `round_up`, `price_for`) are easy to test without a database.
 - A class-level `queryset` is built once at import time; per-request filters such as `timezone.now()` belong in `get_queryset()`. A filter across a reverse relation joins rows, so `distinct()` removes duplicates.
 - CSS: grid and flex children have `min-width: auto`, so wide content stretches them; `minmax(0, 1fr)` columns and `min-w-0` let `overflow-x-auto` actually scroll. `@utility` defines a custom Tailwind v4 class; `scrollbar-width` and `scrollbar-color` are the standard scrollbar properties.
+
+---
+
+## 2.11 Home page redesign
+
+**Built**
+- `HeroCarousel` (Client Component): the three most recent releases, with the TMDB backdrop as background, the poster, a glass card with title, tags and a "Get tickets" button. It moves on its own every 8 seconds and has dots and arrows.
+- `PromoCards`: three static promotions shaped like cinema tickets (coloured stub with the v1 image, dashed tear line with notches), right below the hero. A swipeable row on mobile, three columns on desktop.
+- `MovieCard` as a horizontal card: poster, title, rating, runtime, genres and today's showtimes as links (up to four, then "+N more").
+- `SectionHeading`: section title with the glowing yellow bar from v1.
+- The movie list API now also returns `backdrop_path` and `release_date`; the frontend has `getShowtimesOn(date)`.
+
+**Key decisions**
+- Carousel as a Client Component (state and a timer) instead of a CSS-only scroll-snap row, so it can move on its own and show dots.
+- The carousel pauses on hover and focus, does not move on its own when the system asks for reduced motion, and marks hidden slides as `inert`.
+- "New release" means released less than 14 days ago in Vancouver time. It is computed on the server and passed to the carousel, so the server and the browser cannot disagree near midnight.
+- Promotions go right below the hero so they are visible, and are hard-coded: the cinema is fictional and there is nothing to manage yet.
+- Today's showtimes for every movie come from one request (`/api/showtimes/?date=`), fetched in parallel with the movies and grouped by movie on the server, instead of one request per movie.
+- The movie card is not one big link, because the time chips are links and links cannot be nested.
+
+**Concepts**
+- `"use client"` marks the boundary where components start running in the browser; props passed into it must be serializable.
+- `useState` keeps a value between renders; `useEffect` runs after rendering and its cleanup function cancels the timer.
+- `Promise.all` runs independent requests at the same time.
+- Stacking slides in one grid cell (`col-start-1 row-start-1`) makes the container as tall as the tallest slide, without fixed heights.
+- Static image imports (`import combo from "@/assets/promos/combo.png"`) give `next/image` the width and height automatically.
+- Tailwind only generates classes it finds written out in full in the source, so dynamic class names must be complete strings.
+- CSS scroll snap (`snap-x`, `snap-start`) makes a horizontal row stop on each card when swiping.

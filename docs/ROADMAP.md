@@ -49,6 +49,8 @@ Goal: staff can import movies from TMDB and schedule showtimes; visitors see the
   - Suggested commit: `feat(frontend): add movie page with trailer and showtimes by day`
 - [x] **2.10 Seed data.** Management command that creates auditoriums, imports the movies now in theaters and schedules showtimes for demo purposes.
   - Suggested commit: `feat(cinemas): add update_listing command to seed and refresh the listing`
+- [x] **2.11 Home page redesign.** Hero carousel with featured movies, ticket-style promotions right below it, and horizontal movie cards with today's showtimes and a "New release" label, based on the v1 design. Learn: Client Components, `useState` and `useEffect`, static image imports.
+  - Suggested commit: `feat(frontend): redesign the home page with a hero carousel and promotions`
 
 **Done when:** a visitor can browse current movies and see their showtimes, all coming from Postgres.
 
