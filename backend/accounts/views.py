@@ -4,7 +4,8 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.exceptions import AuthenticationFailed
-from rest_framework.permissions import AllowAny
+from rest_framework.generics import RetrieveAPIView
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.exceptions import TokenError
@@ -110,3 +111,14 @@ class LogoutView(CSRFProtectedMixin, APIView):
         response = Response(status=status.HTTP_204_NO_CONTENT)
         delete_auth_cookies(response)
         return response
+
+
+class MeView(RetrieveAPIView):
+    """Return the logged-in user, or 401 so the frontend knows it must refresh or log in."""
+
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        # No id in the URL: the object is always the user who sent the request.
+        return self.request.user

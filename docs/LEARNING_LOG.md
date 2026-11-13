@@ -265,3 +265,22 @@ A short entry per roadmap step: what was built, the key decisions and the concep
 - Refresh token rotation and blacklist: reusing an old refresh token fails.
 - `APIClient(enforce_csrf_checks=True)`: the test client skips CSRF unless asked.
 - A cookie is only deleted when the `Path` matches the one it was set with.
+
+---
+
+## 3.3 Current user API
+
+**Built**
+- `GET /api/me/` (`MeView`): returns the logged-in user with the same fields as login and register (`id`, `email`, `first_name`, `last_name`), or 401.
+- `accounts/urls.py` now holds every route of the app (`auth/...` and `me/`), included once under `api/` in `config/urls.py`. Public URLs did not change.
+- 9 tests: anonymous, logged in, no CSRF header on GET, invalid cookie, after logout, and write methods rejected.
+
+**Key decisions**
+- `RetrieveAPIView` with `get_object()` returning `request.user`: no id in the URL, so a user can only ever see themselves, and Swagger documents it from `serializer_class`.
+- `IsAuthenticated` gives 401 (not 403), which is the signal the frontend will use to refresh the token.
+- Read-only: no profile editing, because the roadmap does not ask for it.
+
+**Concepts**
+- 401 vs 403: DRF answers 401 only when the first authentication class defines `authenticate_header()` (sent as `WWW-Authenticate`); `JWTAuthentication` does, so ours inherits it.
+- Safe methods (`GET`, `HEAD`, `OPTIONS`) skip Django's CSRF check because they must not change data.
+- Generic views: overriding `get_object()` instead of looking the object up by a URL parameter.

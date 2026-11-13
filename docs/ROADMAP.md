@@ -64,7 +64,8 @@ Goal: users can sign up, log in and see their profile.
   - Suggested commit: `docs: add authentication design`
 - [x] **3.2 Sign up and login API.** Register, login, logout and refresh endpoints that set and clear cookies. Tests.
   - Suggested commit: `feat(accounts): add custom user and cookie-based jwt auth endpoints`
-- [ ] **3.3 Current user API.** `GET /api/me/`. Tests for authenticated and anonymous access.
+- [x] **3.3 Current user API.** `GET /api/me/`. Tests for authenticated and anonymous access.
+  - Suggested commit: `feat(accounts): add current user endpoint`
 - [ ] **3.4 Auth pages.** Sign up and login forms in Next.js (Client Components), error handling, redirects.
 - [ ] **3.5 Protected routes.** Profile page that requires login; header shows the logged-in user. Learn: Next.js middleware or server-side checks with cookies.
 
