@@ -16,6 +16,7 @@ Stripe ──webhook──▶ Django ──task──▶ Celery worker ──┴
 - **Redis** holds short-lived data only: seat locks with an expiry, Channels messages and Celery jobs. Losing it can release a lock early but never loses a sale.
 - **Celery** runs slow work (PDF generation, emails, expiring orders) outside the request/response cycle.
 - **Channels** pushes seat status changes to everyone viewing the same showtime.
+- **Authentication** uses JWT in httpOnly cookies, with the browser reaching the API through Next.js rewrites. See [AUTH.md](AUTH.md).
 
 ## Data model
 

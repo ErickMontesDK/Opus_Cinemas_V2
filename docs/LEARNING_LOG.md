@@ -215,3 +215,25 @@ A short entry per roadmap step: what was built, the key decisions and the concep
 - Static image imports (`import combo from "@/assets/promos/combo.png"`) give `next/image` the width and height automatically.
 - Tailwind only generates classes it finds written out in full in the source, so dynamic class names must be complete strings.
 - CSS scroll snap (`snap-x`, `snap-start`) makes a horizontal row stop on each card when swiping.
+
+---
+
+## 3.1 Auth design
+
+**Built**
+- `docs/AUTH.md`: the authentication design (decisions, alternatives, endpoints and login flow), linked from `ARCHITECTURE.md`. No code yet.
+
+**Key decisions**
+- JWT (simplejwt) instead of Django sessions. Sessions would be simpler; JWT is the common API standard and a learning goal. Refresh token rotation with a blacklist gives a real logout.
+- Tokens in httpOnly cookies, not `localStorage`, so an injected script cannot read them. `access` lives 15 minutes; `refresh` lives 7 days and is only sent to `/api/auth/`.
+- The browser reaches Django through Next.js rewrites (`/api/:path*`), so the cookies are first-party on the frontend domain and Server Components can read them. Cross-origin cookies would be blocked by Safari and invisible to Next.js.
+- CSRF protection in two layers: `SameSite=Lax` plus Django's CSRF token sent in an `X-CSRFToken` header, also on login and register.
+- A custom `accounts.User` with email login, created now because changing the user model later is very hard. The local database is reset once.
+
+**Concepts**
+- JWT: a token signed by the server that carries the user id and an expiry; the server checks the signature without a database query.
+- Access vs refresh tokens: a short-lived token for every request and a long-lived one used only to get new tokens.
+- httpOnly, Secure, SameSite and Path cookie attributes.
+- CSRF: the browser attaches cookies to requests started by other sites; a token that only our pages can read stops it.
+- First-party vs third-party cookies, and why a same-origin proxy avoids the problem.
+- Next.js redirects trailing slashes by default, which breaks `POST` to Django URLs; `skipTrailingSlashRedirect` keeps them.

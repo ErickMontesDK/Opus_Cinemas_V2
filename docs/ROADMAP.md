@@ -60,7 +60,8 @@ Goal: staff can import movies from TMDB and schedule showtimes; visitors see the
 
 Goal: users can sign up, log in and see their profile.
 
-- [ ] **3.1 Auth design.** Decide and document: JWT (djangorestframework-simplejwt) stored in httpOnly cookies, CSRF handling, token refresh.
+- [x] **3.1 Auth design.** Decide and document: JWT (djangorestframework-simplejwt) stored in httpOnly cookies, CSRF handling, token refresh.
+  - Suggested commit: `docs: add authentication design`
 - [ ] **3.2 Sign up and login API.** Register, login, logout and refresh endpoints that set and clear cookies. Tests.
 - [ ] **3.3 Current user API.** `GET /api/me/`. Tests for authenticated and anonymous access.
 - [ ] **3.4 Auth pages.** Sign up and login forms in Next.js (Client Components), error handling, redirects.
