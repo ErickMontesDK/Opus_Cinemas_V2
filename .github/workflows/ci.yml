@@ -36,7 +36,7 @@ jobs:
 
     env:
       DEBUG: "False"
-      SECRET_KEY: ci-only-not-a-real-secret
+      SECRET_KEY: ci-only-not-a-real-secret-but-long-enough-for-jwt
       DATABASE_URL: postgres://opus:opus@localhost:5432/opus_cinemas
 
     steps:

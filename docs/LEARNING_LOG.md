@@ -237,3 +237,31 @@ A short entry per roadmap step: what was built, the key decisions and the concep
 - CSRF: the browser attaches cookies to requests started by other sites; a token that only our pages can read stops it.
 - First-party vs third-party cookies, and why a same-origin proxy avoids the problem.
 - Next.js redirects trailing slashes by default, which breaks `POST` to Django URLs; `skipTrailingSlashRedirect` keeps them.
+
+---
+
+## 3.2 Sign up and login API
+
+**Built**
+- `accounts` app with a custom `User` (no username, unique email stored lowercase, first and last name required at sign up) and its admin.
+- `CookieJWTAuthentication`: reads the access token from the `access` cookie and enforces CSRF. It is now the default DRF authentication class.
+- Endpoints under `/api/auth/`: `csrf/` (204 + `csrftoken` cookie), `register/` (201 + user + cookies), `login/` (200 + user + cookies), `refresh/` (204 + new cookies) and `logout/` (204, blacklists the refresh token and deletes the cookies).
+- `cookies.py` keeps every cookie flag in one place; a drf-spectacular extension documents the cookie auth in Swagger.
+- 30 tests: model, every endpoint (with CSRF checks on) and the authentication class.
+
+**Key decisions**
+- simplejwt's own serializers check credentials (`TokenObtainPairSerializer`) and rotate tokens (`TokenRefreshSerializer`); our views only move tokens into cookies.
+- An invalid or expired access cookie means "anonymous", so public endpoints keep working; protected ones still return 401.
+- DRF skips CSRF when nobody is logged in, so a mixin enforces it on the auth views (403 in JSON).
+- Wrong email and wrong password return the same 401 message, so the API does not reveal which emails exist.
+- Emails are lowercased in `User.save()` and in `get_by_natural_key()`, which covers the API, the admin and the shell.
+- `SECRET_KEY` also signs the JWTs, so it needs at least 32 random characters.
+
+**Concepts**
+- `AUTH_USER_MODEL` must be set before the first migration; `admin.0001` depends on it, which is why the local database was reset.
+- `AbstractUser` with `username = None`, `USERNAME_FIELD` and `REQUIRED_FIELDS`; a custom `BaseUserManager`.
+- Django's built-in user forms point to `auth.User`; a custom user needs subclasses with its own `Meta.model`.
+- `ModelSerializer` adds a case-sensitive `UniqueValidator`; declaring the field by hand replaces it.
+- Refresh token rotation and blacklist: reusing an old refresh token fails.
+- `APIClient(enforce_csrf_checks=True)`: the test client skips CSRF unless asked.
+- A cookie is only deleted when the `Path` matches the one it was set with.

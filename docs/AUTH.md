@@ -71,6 +71,7 @@ SIMPLE_JWT = {
 - **Rotation:** every refresh returns a new refresh token and blacklists the old one (`rest_framework_simplejwt.token_blacklist` app). A stolen refresh token stops working as soon as the real user refreshes.
 - **Logout:** blacklists the refresh token and deletes both cookies.
 - **Reading the token:** simplejwt reads the `Authorization` header by default. A small custom authentication class extends `JWTAuthentication` to read the `access` cookie instead, and enforces CSRF (decision 4).
+- **Invalid or expired access cookie:** the request is treated as anonymous, not rejected. Public endpoints such as the movie listing keep working when the token expires, and protected endpoints still answer `401`, which tells the frontend to refresh.
 - `Secure` is driven by a setting (`True` unless `DEBUG`), because local development runs on plain HTTP.
 
 ### 4. CSRF protection: `SameSite=Lax` plus Django's CSRF token
@@ -83,7 +84,7 @@ Cookies are sent automatically, so another site could try to make the browser se
 Details:
 - `GET /api/auth/csrf/` (with `ensure_csrf_cookie`) gives the browser the `csrftoken` cookie before the first form is sent.
 - `CSRF_TRUSTED_ORIGINS` contains the frontend origin, because Django checks the `Origin` header of proxied requests against it.
-- Login and register also require the CSRF token. Otherwise an attacker could log the victim into the attacker's account (login CSRF).
+- Login and register also require the CSRF token. Otherwise an attacker could log the victim into the attacker's account (login CSRF). DRF skips CSRF when nobody is logged in, so the auth views enforce it with a small mixin.
 
 ### 5. Refreshing the access token
 

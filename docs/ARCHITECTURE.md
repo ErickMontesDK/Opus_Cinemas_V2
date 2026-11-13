@@ -22,6 +22,7 @@ Stripe ──webhook──▶ Django ──task──▶ Celery worker ──┴
 
 | Model | Fields |
 |---|---|
+| **User** | email (login, unique, stored lowercase), password, first_name, last_name, is_staff |
 | **Movie** | tmdb_id, title, synopsis, runtime, classification, release_date, poster_path, backdrop_path, trailer, genres |
 | **Genre** | tmdb_id, name |
 | **Auditorium** | name, rows, columns |

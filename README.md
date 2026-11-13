@@ -25,6 +25,7 @@ It is a rebuild of a school project ([v1](https://github.com/ErickMontesDK/Opus-
 ├── frontend/          # Next.js + TypeScript + Tailwind
 ├── backend/           # Django project
 │   ├── config/        # settings, urls, asgi, celery
+│   ├── accounts/      # custom user, sign up, login (JWT cookies)
 │   ├── movies/        # movies, TMDB
 │   ├── cinemas/       # auditoriums, seats, showtimes
 │   ├── bookings/      # orders, seat locks, Stripe, websockets
@@ -57,6 +58,8 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements-dev.txt
 cp .env.example .env
+# Paste the output as SECRET_KEY in .env (it also signs the login tokens)
+python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
 python manage.py migrate
 python manage.py createsuperuser
 ```
