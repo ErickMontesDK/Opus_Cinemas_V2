@@ -4,7 +4,7 @@ A full stack fictional movie theater: a movie listing powered by TMDB, a real-ti
 
 It is a rebuild of a school project ([v1](https://github.com/ErickMontesDK/Opus-Cinemas), vanilla JS + jQuery) as a production-style application with a real backend.
 
-> 🚧 Work in progress. Current phase: **3, accounts**. Visitors can already browse the movies now in theaters and their showtimes, and create an account or log in.
+> 🚧 Work in progress. Current phase: **4, live seats**. Visitors can already browse the movies now in theaters and their showtimes, create an account, log in and stay logged in, and log out.
 
 ## Stack
 
@@ -85,7 +85,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:3000 to see the home page with the movie listing. Each movie has its own page with the trailer and showtimes by day. Sign up at `/register` and log in at `/login`.
+Open http://localhost:3000 to see the home page with the movie listing. Each movie has its own page with the trailer and showtimes by day. Sign up at `/register` and log in at `/login`; you come back to the page you were on, and the header shows your name and a "Log out" button.
 
 `API_URL` in `.env.local` points to Django. It is server-only: the browser calls `/api/...` on the frontend, and Next.js forwards those requests to Django (see [Authentication](docs/AUTH.md)).
 
@@ -100,8 +100,8 @@ Open http://localhost:3000 to see the home page with the movie listing. Each mov
 
 1. ✅ **Foundation**: repo, Docker Compose, Django + Postgres, Next.js with Tailwind, CI.
 2. ✅ **Movie listing**: models, admin, TMDB import, listing and movie detail pages.
-3. **Accounts**: sign up, login (JWT in httpOnly cookies), profile. ← current
-4. **Live seats**: seat map, Redis seat locks, WebSockets.
+3. ✅ **Accounts**: sign up, login and logout (JWT in httpOnly cookies), sessions that survive reloads.
+4. **Live seats**: seat map, Redis seat locks, WebSockets. ← current
 5. **Payments**: Stripe Checkout, webhook, orders and expiration.
 6. **Tickets**: PDF + QR + email with Celery, "My tickets" and validation at the entrance.
 7. **Polish and deploy**: e2e tests, demo user, public deploy.

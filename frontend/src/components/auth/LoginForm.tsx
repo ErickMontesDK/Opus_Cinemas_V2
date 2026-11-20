@@ -8,7 +8,7 @@ import { type AuthErrors, login } from "@/lib/auth";
 
 const NO_ERRORS: AuthErrors = { fields: {} };
 
-export default function LoginForm() {
+export default function LoginForm({ next }: { next: string }) {
   const router = useRouter();
   const [values, setValues] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState<AuthErrors>(NO_ERRORS);
@@ -25,8 +25,8 @@ export default function LoginForm() {
 
     const result = await login(values.email, values.password);
     if (result.ok) {
-      router.push("/");
-      // Re-render the Server Components so they see the new cookies.
+      // replace(): the back button should not return to the form. refresh(): Server Components see the new cookies.
+      router.replace(next);
       router.refresh();
       return;
     }

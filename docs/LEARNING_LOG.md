@@ -310,3 +310,33 @@ A short entry per roadmap step: what was built, the key decisions and the concep
 - A component without `"use client"` becomes client code when a Client Component imports it (`FormField`).
 - Accessible forms: `label htmlFor`, `autoComplete`, `aria-invalid`, `aria-describedby`, `role="alert"`; Tailwind's `aria-invalid:` variant.
 
+
+---
+
+## 3.5 Session in the frontend
+
+**Built**
+- `src/proxy.ts`: before every page, if the `access` cookie is gone but `refresh` is there, it calls Django's refresh endpoint, puts the new tokens in the request cookies (so the same render sees the user) and forwards the `Set-Cookie` headers to the browser.
+- The `refresh` cookie moved from `Path=/api/auth/` to `Path=/`, so the browser sends it with page requests and the proxy can see it.
+- `src/lib/session.ts` (server-only): `getCurrentUser()` reads the `access` cookie with `cookies()` and calls `/api/me/`, memoized per request with `cache()`.
+- Header: a `UserMenu` Server Component inside `<Suspense>` shows "Log in" (`LoginLink`) or the user (initial in a circle, first name, and a discreet "Log out" text link from `LogoutButton`).
+- `?next=` redirects: "Log in" links to `/login?next=<current URL>`, and after login or sign up the user returns to that URL. `/login` and `/register` redirect logged-in users.
+- `logout()` in `src/lib/auth.ts`.
+
+**Key decisions**
+- Refresh on the server (`proxy.ts`) instead of only in the browser: no "Log in" flash, and the server always knows who is logged in. The cost is a refresh cookie on `/` and a possible rotation race, kept rare and harmless (pages only, no prefetches, cookies kept when a refresh fails).
+- No profile page: the user stays on the page they were on. A settings page can come later.
+- `safeNextPath()` only accepts paths on this site, to avoid open redirects (`//evil.com`, `/\evil.com`).
+- `router.replace` after login, so the back button does not return to the form.
+- Logout does a full reload (`window.location.reload()`) instead of `router.refresh()`: with a soft refresh only the name disappeared, and it was not clear that the session had ended.
+- If `/api/me/` fails, the header falls back to "Log in" instead of breaking every page.
+- The browser `fetch` wrapper that refreshes on `401` waits until Client Components call protected endpoints (phase 4).
+
+**Concepts**
+- Proxy (formerly middleware): runs before routing, can read and change request cookies and headers, and set response cookies. `matcher` with `missing` skips prefetches.
+- `NextResponse.next({ request: { headers } })` passes modified request headers to the page; response headers go to the browser.
+- `cookies()` from `next/headers` makes a route dynamic (rendered on every request).
+- `import "server-only"` makes the build fail if a Client Component imports the module.
+- `<Suspense>` streams the page and shows a fallback while an async Server Component waits.
+- `usePathname` and `useSearchParams` read the current URL in a Client Component.
+- Page `searchParams` is a Promise in Next.js 16 and is typed with the global `PageProps<"/route">` helper.

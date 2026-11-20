@@ -1,12 +1,20 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 import AuthTicket from "@/components/auth/AuthTicket";
 import RegisterForm from "@/components/auth/RegisterForm";
+import { safeNextPath, withNext } from "@/lib/redirect";
+import { getCurrentUser } from "@/lib/session";
 
 export const metadata: Metadata = { title: "Sign up" };
 
-export default function RegisterPage() {
+export default async function RegisterPage({ searchParams }: PageProps<"/register">) {
+  const next = safeNextPath((await searchParams).next);
+  if (await getCurrentUser()) {
+    redirect(next);
+  }
+
   return (
     <section className="flex w-full items-center justify-center px-4 py-10 sm:py-16">
       <AuthTicket
@@ -16,13 +24,13 @@ export default function RegisterPage() {
         footer={
           <>
             Already have an account?{" "}
-            <Link href="/login" className="font-semibold text-brand hover:text-paper">
+            <Link href={withNext("/login", next)} className="font-semibold text-brand hover:text-paper">
               Log in
             </Link>
           </>
         }
       >
-        <RegisterForm />
+        <RegisterForm next={next} />
       </AuthTicket>
     </section>
   );

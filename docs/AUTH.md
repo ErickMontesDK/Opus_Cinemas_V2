@@ -57,7 +57,7 @@ Implementation notes:
 | Cookie | Holds | Lifetime | Flags |
 |---|---|---|---|
 | `access` | Access token | 15 minutes | `HttpOnly`, `Secure` outside local development, `SameSite=Lax`, `Path=/` |
-| `refresh` | Refresh token | 7 days | Same flags, but `Path=/api/auth/`, so it is only sent to the auth endpoints |
+| `refresh` | Refresh token | 7 days | Same flags, also `Path=/`, so the Next.js proxy sees it on page requests (decision 5) |
 
 simplejwt settings:
 
@@ -90,8 +90,32 @@ Details:
 
 ### 5. Refreshing the access token
 
-- **Browser:** a small wrapper around `fetch`. On a `401`, it calls `POST /api/auth/refresh/` once and retries the original request. If the refresh fails too, the user is treated as logged out.
-- **Next.js server:** Server Components cannot write cookies. Whether server-side code should also refresh tokens (for example in [`proxy.ts`](https://nextjs.org/docs/app/api-reference/file-conventions/proxy), the Next.js 16 name for middleware) is decided in step 3.5.
+The `access` cookie expires with its token after 15 minutes. Without a refresh, reloading a page after that would show the user as logged out, even with 7 days left on the refresh token.
+
+**Next.js server (step 3.5): [`proxy.ts`](https://nextjs.org/docs/app/api-reference/file-conventions/proxy)**, the Next.js 16 name for middleware. It runs before every page, because Server Components cannot write cookies:
+
+1. If the `access` cookie is gone but `refresh` and `csrftoken` are there, the proxy calls `POST /api/auth/refresh/` on Django, forwarding the cookies with `X-CSRFToken` and the frontend `Origin` (checked against `CSRF_TRUSTED_ORIGINS`).
+2. It copies the new tokens into the request cookies, so the page in the same request already sees the user, and forwards Django's `Set-Cookie` headers to the browser.
+3. The `refresh` cookie uses `Path=/` for this, since with `Path=/api/auth/` the browser would not send it with page requests. It is still `HttpOnly`, `SameSite=Lax` and only goes to our own origin.
+
+Rotation race: two requests that refresh at the same time send the same refresh token, and the second one fails because the first one already blacklisted it. To keep that rare and harmless:
+- The proxy only runs on pages: not on `/api`, build files or static files, and not on `<Link>` prefetches, which run in parallel.
+- When a refresh fails, the proxy does not delete the cookies. It only renders that one request as anonymous, because another request may have stored valid cookies already.
+
+Alternative considered: refreshing only in the browser (Client Components call `/api/me/` and refresh on `401`). It is simpler and keeps the refresh cookie on `/api/auth/`, but the header would flash "Log in" before showing the user, and the server would never know who is logged in.
+
+**Server Components:** `getCurrentUser()` in `src/lib/session.ts` (server-only) reads the `access` cookie with `cookies()` and calls `/api/me/`. React's `cache()` shares that call between the header and the page in the same request. Reading cookies makes every page render on demand (dynamic), which is expected for a site that shows the logged-in user.
+
+**Browser:** a small wrapper around `fetch` will refresh on a `401` and retry once, when Client Components start calling protected endpoints (seat locks, phase 4). Until then, the proxy covers every page load.
+
+## Frontend behavior
+
+- The header shows "Log in" to visitors. Logged-in users see a circle with their initial, their first name and a discreet "Log out" text link below it. The user part sits in a `<Suspense>` boundary, so the rest of the header does not wait for the API.
+- "Log in" links to `/login?next=<current URL>`. After logging in or signing up, the user goes back to that same URL (`router.replace`, so the back button does not return to the form).
+- `next` only accepts paths on this site (starting with `/` but not `//` or `/\`), to prevent open redirects. Anything else falls back to `/`.
+- `/login` and `/register` redirect logged-in users to `next`.
+- "Log out" calls `POST /api/auth/logout/` and fully reloads the current page (`window.location.reload()`), so leaving the session is visible and no client state of the user survives.
+- There is no profile page yet. A user settings page can come later if a step needs one.
 
 ### 6. Custom user model with email login
 
@@ -119,9 +143,11 @@ Read endpoints (movies, showtimes) stay public (`AllowAny`). Endpoints that need
 1. Browser  GET  /api/auth/csrf/          ◀── Set-Cookie: csrftoken
 2. Browser  POST /api/auth/login/         (X-CSRFToken header, email + password)
             ◀── Set-Cookie: access (15 min), refresh (7 days)
-3. Browser  GET  /api/me/                 (access cookie sent automatically)
-4. ...15 minutes later, a request gets 401
-5. Browser  POST /api/auth/refresh/       (refresh cookie, X-CSRFToken)
+3. Browser  GET  /movies/1                (page request, access cookie sent automatically)
+            Next.js server  GET /api/me/  (forwards the access cookie) → header shows the user
+4. ...15 minutes later, the browser drops the expired access cookie
+5. Browser  GET  /movies/1                (only the refresh and csrftoken cookies)
+            proxy.ts  POST /api/auth/refresh/  (refresh cookie, X-CSRFToken, Origin)
             ◀── Set-Cookie: new access, new refresh (old refresh blacklisted)
-6. Browser  repeats the request from step 4
+            The page renders with the new access token, and the browser stores the new cookies.
 ```

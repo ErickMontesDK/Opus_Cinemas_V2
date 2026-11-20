@@ -68,7 +68,8 @@ Goal: users can sign up, log in and see their profile.
   - Suggested commit: `feat(accounts): add current user endpoint`
 - [x] **3.4 Auth pages.** Sign up and login forms in Next.js (Client Components), error handling, redirects.
   - Suggested commit: `feat(frontend): add sign up and login pages`
-- [ ] **3.5 Protected routes.** Profile page that requires login; header shows the logged-in user. Learn: Next.js middleware or server-side checks with cookies.
+- [x] **3.5 Session in the frontend.** The header shows the logged-in user with a "Log out" button; after logging in, the user returns to the page they were on; `proxy.ts` renews expired access tokens so the session survives reloads. No profile page for now. Learn: Next.js proxy (middleware), server-side checks with cookies.
+  - Suggested commit: `feat(frontend): keep the session across reloads and show the user in the header`
 
 **Done when:** a user can create an account, log in, reload the page and stay logged in, and log out.
 

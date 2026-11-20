@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { Suspense } from "react";
+
+import UserMenu from "@/components/auth/UserMenu";
 import { SocialLinks } from "./SocialLinks";
 
 export default function SiteHeader() {
@@ -10,19 +13,15 @@ export default function SiteHeader() {
                     Opus Cinemas
                 </Link>
 
-                <div className="flex items-center gap-4">
+                <div className="flex flex-wrap items-center justify-center gap-4">
                     <SocialLinks />
-                    <Link
-                        href="/login"
-                        className="rounded-full border-2 border-brand px-4 py-1.5 font-detail text-xs font-semibold tracking-widest uppercase hover:bg-brand hover:text-ink"
-                    >
-                        Log in
-                    </Link>
+                    {/* The rest of the header does not wait for the /api/me/ call. */}
+                    <Suspense fallback={<div className="h-8 w-24" aria-hidden="true" />}>
+                        <UserMenu />
+                    </Suspense>
                 </div>
             </div>
             </nav>
         </header>
     );
 }
-
-

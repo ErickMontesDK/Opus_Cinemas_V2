@@ -8,7 +8,7 @@ import { type AuthErrors, type RegisterData, register } from "@/lib/auth";
 
 const NO_ERRORS: AuthErrors = { fields: {} };
 
-export default function RegisterForm() {
+export default function RegisterForm({ next }: { next: string }) {
   const router = useRouter();
   const [values, setValues] = useState<RegisterData>({
     first_name: "",
@@ -31,7 +31,8 @@ export default function RegisterForm() {
     // Register also logs the user in: the API sets the auth cookies in the same response.
     const result = await register(values);
     if (result.ok) {
-      router.push("/");
+      // replace(): the back button should not return to the form. refresh(): Server Components see the new cookies.
+      router.replace(next);
       router.refresh();
       return;
     }

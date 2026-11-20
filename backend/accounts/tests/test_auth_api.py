@@ -1,7 +1,6 @@
 import pytest
 from django.urls import reverse
 
-from accounts.cookies import REFRESH_COOKIE_PATH
 from accounts.models import User
 
 from .conftest import PASSWORD
@@ -20,14 +19,14 @@ def assert_auth_cookies_set(response):
     assert access.value and refresh.value
     assert access["httponly"] and refresh["httponly"]
     assert access["samesite"] == refresh["samesite"] == "Lax"
-    assert access["path"] == "/"
-    assert refresh["path"] == REFRESH_COOKIE_PATH
+    # Both on "/" so the Next.js proxy can read the refresh cookie on page requests.
+    assert access["path"] == refresh["path"] == "/"
 
 
 def assert_auth_cookies_deleted(response):
     assert response.cookies["access"].value == ""
     assert response.cookies["refresh"].value == ""
-    assert response.cookies["refresh"]["path"] == REFRESH_COOKIE_PATH
+    assert response.cookies["access"]["path"] == response.cookies["refresh"]["path"] == "/"
 
 
 def login(client, email="ana@example.com", password=PASSWORD):

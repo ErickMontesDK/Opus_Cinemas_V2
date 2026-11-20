@@ -85,3 +85,16 @@ export function login(email: string, password: string): Promise<AuthResult> {
 export function register(data: RegisterData): Promise<AuthResult> {
   return postAuth("/api/auth/register/", data);
 }
+
+export async function logout(): Promise<boolean> {
+  try {
+    const csrfToken = await getCsrfToken();
+    const response = await fetch("/api/auth/logout/", {
+      method: "POST",
+      headers: { "X-CSRFToken": csrfToken },
+    });
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
