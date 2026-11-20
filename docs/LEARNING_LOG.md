@@ -284,3 +284,29 @@ A short entry per roadmap step: what was built, the key decisions and the concep
 - 401 vs 403: DRF answers 401 only when the first authentication class defines `authenticate_header()` (sent as `WWW-Authenticate`); `JWTAuthentication` does, so ours inherits it.
 - Safe methods (`GET`, `HEAD`, `OPTIONS`) skip Django's CSRF check because they must not change data.
 - Generic views: overriding `get_object()` instead of looking the object up by a URL parameter.
+
+---
+
+## 3.4 Auth pages
+
+**Built**
+- Next.js rewrite `/api/:path*/` → Django, so the browser only calls its own origin and the auth cookies belong to the frontend domain. `skipTrailingSlashRedirect` keeps Django's trailing slashes.
+- `NEXT_PUBLIC_API_URL` replaced by a server-only `API_URL` (rewrite and Server Components); `next.config.ts` fails fast if it is missing.
+- `src/lib/auth.ts`: gets the CSRF token (cookie, or `GET /api/auth/csrf/` first), posts login and register with `X-CSRFToken`, and turns DRF errors into `{ form, fields }`.
+- `/login` and `/register` pages (Server Components with metadata) with ticket-style cards (`AuthTicket`), forms as Client Components (`LoginForm`, `RegisterForm`) and a shared `FormField`.
+- "Log in" link in the header.
+
+**Key decisions**
+- Controlled inputs with `useState` and `onSubmit`, instead of `useActionState` or Server Actions: explicit, and Django keeps setting the cookies itself through the rewrite.
+- Server errors are shown as they come: field errors under each input, `detail` at the top. The browser only checks `required` and `type="email"`; password rules live on the server.
+- After success: `router.push("/")` and `router.refresh()`, so Server Components render again with the new cookies.
+- Left for 3.5: `?next=` redirects, hiding the auth pages from logged-in users, the user in the header, logout and the refresh-on-401 wrapper.
+
+**Concepts**
+- Next.js rewrites act as a proxy: the URL in the browser stays the same while the request goes to another server.
+- Only `NEXT_PUBLIC_*` variables reach the browser bundle; any other variable stays on the server.
+- Client Components: `"use client"`, `useState`, controlled inputs (`value` + `onChange`), `event.preventDefault()`.
+- `useRouter` from `next/navigation`: `push` navigates, `refresh` re-runs Server Components without losing client state.
+- A component without `"use client"` becomes client code when a Client Component imports it (`FormField`).
+- Accessible forms: `label htmlFor`, `autoComplete`, `aria-invalid`, `aria-describedby`, `role="alert"`; Tailwind's `aria-invalid:` variant.
+

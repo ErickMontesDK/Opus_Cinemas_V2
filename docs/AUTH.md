@@ -47,6 +47,8 @@ Alternatives considered:
 
 Implementation notes:
 - Django URLs end with a slash, and Next.js redirects `/path/` to `/path` by default. A `POST` that gets redirected loses its body, so `next.config.ts` must keep trailing slashes (`skipTrailingSlashRedirect: true`).
+- `:path*` does not keep the trailing slash, so the rule spells it out on both sides: `/api/:path*/` → `${API_URL}/api/:path*/`. Without it, Django answers `301` to add the slash back.
+- The frontend has a single, server-only `API_URL` variable. The rewrite and the Server Components use it; the browser only sees relative `/api/...` URLs.
 - Vercel rewrites do not proxy WebSockets. The live seat map (phase 4) connects directly to Django. This is fine: viewing seats is public, and seat actions go through authenticated HTTP endpoints.
 - With same-origin requests, CORS is no longer needed for the browser. The CORS settings stay until phase 7 cleans up production settings.
 

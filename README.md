@@ -4,7 +4,7 @@ A full stack fictional movie theater: a movie listing powered by TMDB, a real-ti
 
 It is a rebuild of a school project ([v1](https://github.com/ErickMontesDK/Opus-Cinemas), vanilla JS + jQuery) as a production-style application with a real backend.
 
-> 🚧 Work in progress. Current phase: **3, accounts**. Visitors can already browse the movies now in theaters and their showtimes.
+> 🚧 Work in progress. Current phase: **3, accounts**. Visitors can already browse the movies now in theaters and their showtimes, and create an account or log in.
 
 ## Stack
 
@@ -85,7 +85,9 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:3000 to see the home page with the movie listing. Each movie has its own page with the trailer and showtimes by day.
+Open http://localhost:3000 to see the home page with the movie listing. Each movie has its own page with the trailer and showtimes by day. Sign up at `/register` and log in at `/login`.
+
+`API_URL` in `.env.local` points to Django. It is server-only: the browser calls `/api/...` on the frontend, and Next.js forwards those requests to Django (see [Authentication](docs/AUTH.md)).
 
 ## Quality checks
 

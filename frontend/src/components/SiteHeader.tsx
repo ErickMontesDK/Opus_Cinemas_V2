@@ -9,11 +9,16 @@ export default function SiteHeader() {
                 <Link href="/" className="font-brand hover:text-paper">
                     Opus Cinemas
                 </Link>
-                
 
-                <SocialLinks />
-
-                
+                <div className="flex items-center gap-4">
+                    <SocialLinks />
+                    <Link
+                        href="/login"
+                        className="rounded-full border-2 border-brand px-4 py-1.5 font-detail text-xs font-semibold tracking-widest uppercase hover:bg-brand hover:text-ink"
+                    >
+                        Log in
+                    </Link>
+                </div>
             </div>
             </nav>
         </header>
